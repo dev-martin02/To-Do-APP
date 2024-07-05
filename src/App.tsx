@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 interface TaskStructure {
   taskName: string;
   taskID: number;
@@ -40,11 +39,6 @@ function App() {
   };
 
   const editTask = (id: Number) => {
-    // const findTask = tasks.find(({ taskID }) => taskID === id);
-    // if (findTask) {
-    //   findTask.taskName = updatedTask;
-
-    // }
     setTasks(
       tasks.map((task) =>
         task.taskID === id ? { ...task, taskName: editText } : task
@@ -53,7 +47,7 @@ function App() {
     setEditMode("");
   };
 
-  const x = (id: Number, taskName: string) => {
+  const enableEditMode = (id: Number, taskName: string) => {
     const idString = String(id);
     setEditMode(idString);
     setEditText(taskName);
@@ -70,23 +64,39 @@ function App() {
       />
       <button onClick={addTask}>Add</button>
 
-      <section>
+      <section className="flex flex-col gap-2 p-1 ">
         {tasks.map(({ taskName, taskID }) => (
-          <div key={Number(taskID)}>
+          <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
             {Number(editMode) === taskID ? (
               <>
                 <input
                   type="text"
                   onChange={(e) => setEditText(e.target.value)}
                   value={editText}
+                  className="input input-bordered input-md text-lg w-full max-w-xs block mb-1"
                 />
-                <button onClick={() => editTask(taskID)}>Update</button>
+                <button
+                  className="ml-1 btn btn-sm btn-outline btn-accent"
+                  onClick={() => editTask(taskID)}
+                >
+                  Update
+                </button>
               </>
             ) : (
               <>
-                <p>{taskName}</p>
-                <button onClick={() => deleteTask(taskID)}>Delete</button>
-                <button onClick={() => x(taskID, taskName)}>Edit</button>
+                <p className="text-xl mb-1">{taskName}</p>
+                <button
+                  className="btn btn-xs  btn-outline btn-error"
+                  onClick={() => deleteTask(taskID)}
+                >
+                  Delete
+                </button>
+                <button
+                  className=" ml-1 btn btn-xs btn-outline btn-accent"
+                  onClick={() => enableEditMode(taskID, taskName)}
+                >
+                  Edit
+                </button>
               </>
             )}
           </div>
@@ -100,12 +110,5 @@ export default App;
 
 /*
   Future updates
-    Randoms ID functions where it gives each task an unique ID
     Better Handling Errors 
-  <div key={Number(taskID)}>
-            <p>{taskName}</p>
-            <button onClick={() => deleteTask(taskID)}>Delete</button>
-            <button onClick={() => editTask(taskID)}>Edit</button>
-          </div>
-
 */
