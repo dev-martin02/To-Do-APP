@@ -8,6 +8,8 @@ function App() {
   const [tasks, setTasks] = useState<TaskStructure[]>([]);
   const [newTask, setNewTask] = useState("");
 
+  const [addTaskMode, setAddTaskMode] = useState(false);
+
   const [editMode, setEditMode] = useState("");
   const [editText, setEditText] = useState("");
 
@@ -53,56 +55,89 @@ function App() {
     setEditText(taskName);
   };
 
-  return (
-    <>
-      <h1>To-Do</h1>
-      <input
-        type="text"
-        placeholder="Please write your task"
-        onChange={(e) => setNewTask(e.target.value)}
-        value={newTask}
-      />
-      <button onClick={addTask}>Add</button>
+  const TaskModeState = () => setAddTaskMode(!addTaskMode);
 
-      <section className="flex flex-col gap-2 p-1 ">
-        {tasks.map(({ taskName, taskID }) => (
-          <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
-            {Number(editMode) === taskID ? (
-              <>
-                <input
-                  type="text"
-                  onChange={(e) => setEditText(e.target.value)}
-                  value={editText}
-                  className="input input-bordered input-md text-lg w-full max-w-xs block mb-1"
-                />
+  return (
+    <main className="md:flex md:flex-col md:items-center min-h-screen  ">
+      <div className="md:w-2/6">
+        {" "}
+        <h1 className=" text-2xl border-b-2 m-2 p-1">To-Do</h1>
+        <button
+          onClick={TaskModeState}
+          className="btn bg-indigo-700 text-white border-transparent m-2"
+        >
+          + New Task
+        </button>
+        {addTaskMode && (
+          <section className="fixed top-0 left-0 w-full h-screen bg-gray-200 bg-opacity-50 flex justify-center items-center">
+            <div className="border-2 p-3 m-1 flex w-96 h-40 flex-col justify-center bg-white rounded">
+              <input
+                type="text"
+                placeholder="Please write your task"
+                onChange={(e) => setNewTask(e.target.value)}
+                value={newTask}
+                className="block mb-2 input "
+              />
+              <div className="flex gap-1">
                 <button
-                  className="ml-1 btn btn-sm btn-outline btn-accent"
-                  onClick={() => editTask(taskID)}
+                  onClick={() => (addTask(), TaskModeState())}
+                  className="btn btn-active btn-primary"
                 >
-                  Update
+                  New Task
                 </button>
-              </>
-            ) : (
-              <>
-                <p className="text-xl mb-1">{taskName}</p>
-                <button
-                  className="btn btn-xs  btn-outline btn-error"
-                  onClick={() => deleteTask(taskID)}
-                >
-                  Delete
+                <button className="btn btn-error" onClick={TaskModeState}>
+                  Cancel
                 </button>
-                <button
-                  className=" ml-1 btn btn-xs btn-outline btn-accent"
-                  onClick={() => enableEditMode(taskID, taskName)}
-                >
-                  Edit
-                </button>
-              </>
-            )}
-          </div>
-        ))}
-      </section>
-    </>
+              </div>
+            </div>
+          </section>
+        )}
+        <section className="flex flex-col gap-2 p-1 ">
+          {tasks.map(({ taskName, taskID }) => (
+            <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
+              {Number(editMode) === taskID ? (
+                <>
+                  <input
+                    type="text"
+                    onChange={(e) => setEditText(e.target.value)}
+                    value={editText}
+                    className="input input-bordered input-md text-lg w-full max-w-xs block mb-1"
+                  />
+                  <button
+                    className="ml-1 btn btn-sm btn-outline btn-accent"
+                    onClick={() => editTask(taskID)}
+                  >
+                    Update
+                  </button>
+                </>
+              ) : (
+                <>
+                  <label className="flex gap-2 items-center">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-success text-white"
+                    />
+                    <p className="text-xl mb-1">{taskName}</p>
+                  </label>
+                  <button
+                    className="btn btn-xs  btn-outline btn-error"
+                    onClick={() => deleteTask(taskID)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className=" ml-1 btn btn-xs btn-outline btn-accent"
+                    onClick={() => enableEditMode(taskID, taskName)}
+                  >
+                    Edit
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
+        </section>
+      </div>
+    </main>
   );
 }
 
