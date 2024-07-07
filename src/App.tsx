@@ -1,19 +1,18 @@
 import { useState } from "react";
-interface TaskStructure {
-  taskName: string;
-  taskID: number;
-}
+import { useDispatch } from "react-redux";
+import { addTask } from "./store/taskSlice";
+import { AppDispatch } from "./store/store";
+import TaskList from "./components/TaskList";
 
 function App() {
-  const [tasks, setTasks] = useState<TaskStructure[]>([]);
   const [newTask, setNewTask] = useState("");
 
   const [addTaskMode, setAddTaskMode] = useState(false);
 
-  const [editMode, setEditMode] = useState("");
-  const [editText, setEditText] = useState("");
+  // Store Task!
+  const dispatch = useDispatch<AppDispatch>();
 
-  const addTask = () => {
+  const addTaskX = () => {
     if (newTask) {
       const uniqueID = Date.now();
       const taskObj = {
@@ -21,7 +20,8 @@ function App() {
         taskID: uniqueID,
       };
 
-      setTasks([...tasks, taskObj]);
+      dispatch(addTask(taskObj));
+
       setNewTask("");
     } else {
       console.log("Needs to type something");
@@ -29,37 +29,11 @@ function App() {
     }
   };
 
-  const deleteTask = (id: Number) => {
-    try {
-      const allTask = tasks.filter(({ taskID }) => taskID !== id);
-      setTasks(allTask);
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Oops there was an error " + err.message);
-      }
-    }
-  };
-
-  const editTask = (id: Number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.taskID === id ? { ...task, taskName: editText } : task
-      )
-    );
-    setEditMode("");
-  };
-
-  const enableEditMode = (id: Number, taskName: string) => {
-    const idString = String(id);
-    setEditMode(idString);
-    setEditText(taskName);
-  };
-
   const TaskModeState = () => setAddTaskMode(!addTaskMode);
 
   return (
-    <main className="md:flex md:flex-col md:items-center min-h-screen  ">
-      <div className="md:w-2/6">
+    <main className="sm:flex sm:flex-col sm:items-center min-h-screen  ">
+      <div className=" sm:w-5/6  md:w-4/6 lg:w-3/6 xl:w-2/6">
         {" "}
         <h1 className=" text-2xl border-b-2 m-2 p-1">To-Do</h1>
         <button
@@ -80,7 +54,7 @@ function App() {
               />
               <div className="flex gap-1">
                 <button
-                  onClick={() => (addTask(), TaskModeState())}
+                  onClick={() => (addTaskX(), TaskModeState())}
                   className="btn btn-active btn-primary"
                 >
                   New Task
@@ -92,50 +66,7 @@ function App() {
             </div>
           </section>
         )}
-        <section className="flex flex-col gap-2 p-1 ">
-          {tasks.map(({ taskName, taskID }) => (
-            <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
-              {Number(editMode) === taskID ? (
-                <>
-                  <input
-                    type="text"
-                    onChange={(e) => setEditText(e.target.value)}
-                    value={editText}
-                    className="input input-bordered input-md text-lg w-full max-w-xs block mb-1"
-                  />
-                  <button
-                    className="ml-1 btn btn-sm btn-outline btn-accent"
-                    onClick={() => editTask(taskID)}
-                  >
-                    Update
-                  </button>
-                </>
-              ) : (
-                <>
-                  <label className="flex gap-2 items-center">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-success text-white"
-                    />
-                    <p className="text-xl mb-1">{taskName}</p>
-                  </label>
-                  <button
-                    className="btn btn-xs  btn-outline btn-error"
-                    onClick={() => deleteTask(taskID)}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    className=" ml-1 btn btn-xs btn-outline btn-accent"
-                    onClick={() => enableEditMode(taskID, taskName)}
-                  >
-                    Edit
-                  </button>
-                </>
-              )}
-            </div>
-          ))}
-        </section>
+        <TaskList />
       </div>
     </main>
   );
