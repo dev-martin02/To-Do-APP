@@ -1,35 +1,10 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addTask } from "./store/taskSlice";
-import { AppDispatch } from "./store/store";
-import TaskList from "./components/TaskList";
+import { TaskList } from "./components/TaskList";
 
 function App() {
-  const [newTask, setNewTask] = useState("");
+  const [addTaskStage, setAddStage] = useState(false);
 
-  const [addTaskMode, setAddTaskMode] = useState(false);
-
-  // Store Task!
-  const dispatch = useDispatch<AppDispatch>();
-
-  const addTaskX = () => {
-    if (newTask) {
-      const uniqueID = Date.now();
-      const taskObj = {
-        taskName: newTask,
-        taskID: uniqueID,
-      };
-
-      dispatch(addTask(taskObj));
-
-      setNewTask("");
-    } else {
-      console.log("Needs to type something");
-      return null;
-    }
-  };
-
-  const TaskModeState = () => setAddTaskMode(!addTaskMode);
+  const TaskModeState = () => setAddStage(!addTaskStage);
 
   return (
     <main className="sm:flex sm:flex-col sm:items-center min-h-screen  ">
@@ -42,31 +17,7 @@ function App() {
         >
           + New Task
         </button>
-        {addTaskMode && (
-          <section className="fixed top-0 left-0 w-full h-screen bg-gray-200 bg-opacity-50 flex justify-center items-center">
-            <div className="border-2 p-3 m-1 flex w-96 h-40 flex-col justify-center bg-white rounded">
-              <input
-                type="text"
-                placeholder="Please write your task"
-                onChange={(e) => setNewTask(e.target.value)}
-                value={newTask}
-                className="block mb-2 input "
-              />
-              <div className="flex gap-1">
-                <button
-                  onClick={() => (addTaskX(), TaskModeState())}
-                  className="btn btn-active btn-primary"
-                >
-                  New Task
-                </button>
-                <button className="btn btn-error" onClick={TaskModeState}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </section>
-        )}
-        <TaskList />
+        <TaskList addTaskStage={addTaskStage} setAddStage={setAddStage} />
       </div>
     </main>
   );
