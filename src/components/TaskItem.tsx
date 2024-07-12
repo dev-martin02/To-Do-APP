@@ -61,8 +61,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     );
   }
 
-  const taskWasCompleted = "line-through";
-
   //Task card
   return (
     <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
