@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Types
 export interface Task {
   taskName: string;
+  completed: boolean;
   taskID: number;
 }
 
@@ -38,8 +39,17 @@ const taskSlice = createSlice({
         taskToEdit.taskName = action.payload.taskName;
       }
     },
+    taskCompleted: (state, action: PayloadAction<Task>) => {
+      let task = state.tasks.find(
+        (userTask) => userTask.taskID === action.payload.taskID
+      );
+      if (task) {
+        task.completed = action.payload.completed;
+      }
+    },
   },
 });
 
-export const { addTask, removeTask, editTask } = taskSlice.actions;
+export const { addTask, removeTask, editTask, taskCompleted } =
+  taskSlice.actions;
 export default taskSlice.reducer;

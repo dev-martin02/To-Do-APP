@@ -26,9 +26,9 @@ export const TaskList: React.FC<TaskListProps> = ({
       const uniqueID = Date.now();
       const taskObj = {
         taskName: newTask,
+        completed: false,
         taskID: uniqueID,
       };
-
       dispatch(addTask(taskObj));
       setAddStage(false);
       setNewTask("");
@@ -70,8 +70,8 @@ export const TaskList: React.FC<TaskListProps> = ({
       )}
 
       <section className="flex flex-col gap-2 p-1 ">
-        {userTasks.map(({ taskName, taskID }) => (
-          <TaskItem taskName={taskName} taskID={taskID} />
+        {userTasks.map(({ taskName, taskID, completed }) => (
+          <TaskItem taskName={taskName} taskID={taskID} completed={completed} />
         ))}
       </section>
     </>

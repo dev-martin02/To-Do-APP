@@ -1,14 +1,19 @@
 import { useSelector, useDispatch } from "react-redux";
-import { removeTask, editTask } from "../store/taskSlice";
+import { removeTask, editTask, taskCompleted } from "../store/taskSlice";
 import { RootState } from "../store/store";
 import { useState } from "react";
 
 type TaskItemProps = {
   taskName: string;
   taskID: number;
+  completed: boolean;
 };
 
-export const TaskItem: React.FC<TaskItemProps> = ({ taskName, taskID }) => {
+export const TaskItem: React.FC<TaskItemProps> = ({
+  taskName,
+  taskID,
+  completed,
+}) => {
   const [editTaskText, setEditTaskText] = useState("");
   const [taskToEdit, setTaskToEdit] = useState(0);
 
@@ -27,6 +32,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ taskName, taskID }) => {
       dispatch(
         editTask({
           taskName: editTaskText,
+          completed: false,
           taskID: taskID,
         })
       );
@@ -44,9 +50,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({ taskName, taskID }) => {
     }
   }
 
+  // mark task completed or not
+  function taskProgress(event: boolean) {
+    dispatch(
+      taskCompleted({
+        taskName: taskName,
+        taskID: taskID,
+        completed: event,
+      })
+    );
+  }
+
+  const taskWasCompleted = "line-through";
+
   //Task card
   return (
     <div key={Number(taskID)} className="border-2 rounded-lg p-2 ">
+      {/* Edit task card */}
       {Number(taskToEdit) === taskID ? (
         <>
           <input
@@ -70,23 +90,31 @@ export const TaskItem: React.FC<TaskItemProps> = ({ taskName, taskID }) => {
         </>
       ) : (
         <>
+          {/* Task card */}
           <label className="flex gap-2 items-center">
             <input
               type="checkbox"
+              onChange={(e) => taskProgress(e.target.checked)}
               className="checkbox checkbox-success text-white"
             />
-            <p className="text-xl mb-1">{taskName}</p>
+            <p className={`text-xl mb-1 ${completed && "line-through"}`}>
+              {taskName}
+            </p>
           </label>
 
           <button
-            className=" mr-1 btn btn-xs btn-outline btn-accent"
+            className={`mr-1 btn btn-xs btn-outline btn-accent ${
+              completed && "btn-disabled"
+            }`}
             onClick={() => editStage(taskID)}
           >
             Edit
           </button>
 
           <button
-            className="btn btn-xs  btn-outline btn-error"
+            className={`btn btn-xs  btn-outline btn-error ${
+              completed && "btn-disabled"
+            }`}
             onClick={() => HandleRemoveTask(taskID)}
           >
             Delete

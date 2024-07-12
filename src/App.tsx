@@ -24,8 +24,3 @@ function App() {
 }
 
 export default App;
-
-/*
-  Future updates
-    Better Handling Errors 
-*/
